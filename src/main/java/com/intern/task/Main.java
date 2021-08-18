@@ -8,5 +8,6 @@ public class Main {
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(new HttpServerVerticle());
+        System.out.println("hello1");
     }
 }
