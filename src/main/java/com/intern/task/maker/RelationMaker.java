@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.intern.task.model.jdl.RelationType;
 import com.intern.task.model.jdl.Relationship;
+import com.intern.task.model.sql.ForeignKey;
 import com.intern.task.util.CodeUtil;
 
 public class RelationMaker extends Maker<List<Relationship>>{
@@ -39,6 +40,11 @@ public class RelationMaker extends Maker<List<Relationship>>{
     @Override
     protected void bodySolver(String body) {
         for(String line: body.split("\n")){
+            Relationship rel = new Relationship();
+            ForeignKey fromFK = new ForeignKey();
+            ForeignKey toFK = new ForeignKey();
+            rel.setType(type);
+
             line = line.trim();
             if(line.equals(""))
                 continue;
@@ -46,9 +52,7 @@ public class RelationMaker extends Maker<List<Relationship>>{
 
             String[] items = CodeUtil.remove2Probels(line).split(" to ");
             if(items.length>1){
-                Relationship rel = new Relationship();
-                rel.setType(type);
-
+                
                 object.add(rel);
             }
         }
