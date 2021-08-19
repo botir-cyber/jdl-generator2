@@ -12,7 +12,26 @@ CREATE TABLE IF NOT EXISTS ${tableUri} (
 
 ALTER TABLE ${tableUri}
 <#list entity.fields as field>
-ADD COLUMN IF NOT EXISTS ${field.name.snakeCase} ${field.type.pgName}<#if field.validation??><#assign valid = field.validation/><#if valid.required??> NOT NULL</#if><#if valid.unique??> UNIQUE</#if></#if>,
+<#assign fieldName = field.name.snakeCase/>
+<#assign type = field.type.pgName/>
+ADD COLUMN IF NOT EXISTS ${fieldName} ${type}
+<#if field.validation??>
+<#assign valid = field.validation/>
+<#if valid.required>
+    NOT NULL
+</#if>
+<#if valid.unique>
+    UNIQUE
+</#if>
+<#if type=='TEXT'><#assign obj = "char_length(${fieldName})"/><#else><#assign obj = fieldName/></#if>
+<#if valid.min?? && valid.max??>
+    CONSTRAINT ${schema}_${table}_min_max_check CHECK (${valid.min} <= ${obj} AND ${obj} <= ${valid.max})
+<#elseif valid.min??>
+    CONSTRAINT ${schema}_${table}_min_check CHECK (${valid.min} <= ${obj})
+<#elseif valid.max??>
+    CONSTRAINT ${schema}_${table}_max_check CHECK (${obj} <= ${valid.max})
+</#if>
+</#if>,
 </#list>
 
 ADD COLUMN IF NOT EXISTS created_on TIMESTAMP WITH TIME ZONE DEFAULT now(),

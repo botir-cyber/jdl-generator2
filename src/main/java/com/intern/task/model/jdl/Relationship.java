@@ -11,24 +11,27 @@ public class Relationship {
         return this.type;
     }
 
-    public void setType(RelationType type) {
+    public Relationship setType(RelationType type) {
         this.type = type;
+        return this;
     }
 
     public ForeignKey getFromFK() {
         return this.fromFK;
     }
 
-    public void setFromFK(ForeignKey fromFK) {
+    public Relationship setFromFK(ForeignKey fromFK) {
         this.fromFK = fromFK;
+        return this;
     }
 
     public ForeignKey getToFK() {
         return this.toFK;
     }
 
-    public void setToFK(ForeignKey toFK) {
+    public Relationship setToFK(ForeignKey toFK) {
         this.toFK = toFK;
+        return this;
     }
 
 }

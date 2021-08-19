@@ -100,13 +100,13 @@ public class EntityMaker extends Maker<Entity>{
                     } else if(items[i].equals("unique")){
                         validation.setUnique(true);
                     } else if(items[i].startsWith("max")){
-                        String number = items[i].split("\\(")[1].split("//)")[0].trim();
+                        String number = items[i].split("\\(")[1].split("\\)")[0].trim();
                         validation.setMax(Long.parseLong(number));
                     } else if(items[i].startsWith("min")){
-                        String number = items[i].split("\\(")[1].split("//)")[0].trim();
+                        String number = items[i].split("\\(")[1].split("\\)")[0].trim();
                         validation.setMin(Long.parseLong(number));
                     } else if(items[i].startsWith("pattern")){
-                        String pattern = items[i].split("\\(")[1].split("//)")[0].trim();
+                        String pattern = items[i].split("\\(")[1].split("\\)")[0].trim();
                         validation.setPattern(pattern);
                     }
                 } catch (Exception e) {

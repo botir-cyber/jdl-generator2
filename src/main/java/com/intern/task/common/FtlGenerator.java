@@ -63,7 +63,8 @@ public class FtlGenerator implements Structure {
         jdlCode.define();
         contextJson
             .put("enums", jdlCode.getEnums())
-            .put("entities", jdlCode.getEntities());
+            .put("entities", jdlCode.getEntities())
+            .put("foreignKeys", jdlCode.getForeignKeys());
 
         generateFile(new File(TEMPLATE_PATH));
         CompositeFuture.all(writtenFileNames)
@@ -138,16 +139,14 @@ public class FtlGenerator implements Structure {
                             );
                         }
                         break;
-                    case "create-type.sql.ftl":
-                        for (Enum e : jdlCode.getEnums()) {
-                            writtenFileNames.add(
+                    case "create-references.sql.ftl":
+                        writtenFileNames.add(
                                 fileCreator.create(
                                     file,
-                                    newFileName.replace("create-type", schema.getSnakeCase() + "." + e.getName().getSnakeCase()),
-                                    contextJson.put("enum", e)
+                                    newFileName.replace("create-references", schema.getSnakeCase() + "-references"),
+                                    contextJson
                                 )
                             );
-                        }
                         break;
                     case "create-add-function.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {

@@ -1,0 +1,18 @@
+enum Language{
+	ENG, RUS, UZB
+}
+
+entity Book{
+    name String
+    language Language required
+    publishedDate LocalDate
+}
+
+entity Author{
+	fullName String required
+	bio String
+}
+
+relationship ManyToMany{
+	Book to Author
+}
