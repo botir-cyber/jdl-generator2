@@ -31,7 +31,7 @@ public class FtlGenerator implements Structure {
     private Name schema;
     private String extendedJavaPath;
 
-    private List<Future> writtenFileNames = new ArrayList<>();
+    private List<Future> writtenFiles = new ArrayList<>();
 
     public FtlGenerator(RoutingContext ctx) {
         Vertx vertx = ctx.vertx();
@@ -67,7 +67,7 @@ public class FtlGenerator implements Structure {
             .put("foreignKeys", jdlCode.getForeignKeys());
 
         generateFile(new File(TEMPLATE_PATH));
-        CompositeFuture.all(writtenFileNames)
+        CompositeFuture.all(writtenFiles)
             .onSuccess(ar -> {
                 promise.complete(
                     new JsonObject()
@@ -97,7 +97,7 @@ public class FtlGenerator implements Structure {
                     case "EntityCommand.java.ftl":
                     case "EntityList.java.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("Entity", e.getName().getPascalCase()),
@@ -108,7 +108,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "Enum.java.ftl":
                         for (Enum e : jdlCode.getEnums()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("Enum", e.getName().getPascalCase()),
@@ -120,7 +120,7 @@ public class FtlGenerator implements Structure {
                     case "SchemaServiceController.java.ftl":
                     case "SchemaService.java.ftl":
                     case "SchemaServiceRouter.java.ftl":
-                        writtenFileNames.add(
+                        writtenFiles.add(
                             fileCreator.create(
                                 file,
                                 newFileName.replace("Schema", schema.getPascalCase()),
@@ -130,7 +130,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "create-table.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-table", schema.getSnakeCase() + "." + e.getName().getSnakeCase()),
@@ -140,7 +140,7 @@ public class FtlGenerator implements Structure {
                         }
                         break;
                     case "create-references.sql.ftl":
-                        writtenFileNames.add(
+                        writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-references", schema.getSnakeCase() + "-references"),
@@ -150,7 +150,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "create-add-function.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-add-function", schema.getSnakeCase() + "." + e.getName().getSnakeCase() + "_" + "add"),
@@ -161,7 +161,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "create-delete-function.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-delete-function", schema.getSnakeCase() + "." + e.getName().getSnakeCase() + "_" + "delete"),
@@ -172,7 +172,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "create-get-function.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-get-function", schema.getSnakeCase() + "." + e.getName().getSnakeCase() + "_" + "get"),
@@ -183,7 +183,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "create-get-list-function.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-get-list-function", schema.getSnakeCase() + "." + e.getName().getSnakeCase() + "_" + "get_list"),
@@ -194,7 +194,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "create-get-all-function.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-get-all-function", schema.getSnakeCase() + "." + e.getName().getSnakeCase() + "_" + "get_all"),
@@ -205,7 +205,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "create-get-summary-list-function.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-get-summary-list-function", schema.getSnakeCase() + "." + e.getName().getSnakeCase() + "_" + "get_summary_list"),
@@ -216,7 +216,7 @@ public class FtlGenerator implements Structure {
                         break;
                     case "create-update-function.sql.ftl":
                         for (Entity e : jdlCode.getEntities()) {
-                            writtenFileNames.add(
+                            writtenFiles.add(
                                 fileCreator.create(
                                     file,
                                     newFileName.replace("create-update-function", schema.getSnakeCase() + "." + e.getName().getSnakeCase() + "_" + "update"),
@@ -228,11 +228,11 @@ public class FtlGenerator implements Structure {
                         
                     case "config.properties.ftl":
                         String currentPath = (System.getProperty("user.dir") + "/" + newFileName.split("src")[0]).replace("\\", "/");
-                        writtenFileNames.add(fileCreator.create(file, newFileName, contextJson.put("currentPath", currentPath)));
+                        writtenFiles.add(fileCreator.create(file, newFileName, contextJson.put("currentPath", currentPath)));
                         break;
 
                     default:
-                        writtenFileNames.add(fileCreator.create(file, newFileName, contextJson));
+                        writtenFiles.add(fileCreator.create(file, newFileName, contextJson));
                 }
             } catch (Exception e) {
                 LOGGER.error(e);
